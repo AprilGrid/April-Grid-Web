@@ -1,3 +1,4 @@
+import './style.css';
 console.log('April Grid site loaded.');
 
 document.addEventListener('DOMContentLoaded', () => {
