@@ -1,0 +1,16 @@
+{
+    "name": "april-grid-web",
+    "version": "1.0.0",
+    "description": "April Grid Agency Website",
+    "main": "index.html",
+    "scripts": {
+        "start": "serve",
+        "dev": "serve"
+    },
+    "keywords": [],
+    "author": "April Grid",
+    "license": "ISC",
+    "dependencies": {
+        "serve": "^14.2.0"
+    }
+}
