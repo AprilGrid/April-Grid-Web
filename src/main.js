@@ -1,57 +1,50 @@
 import './style.css';
-console.log('April Grid site loaded.');
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Mobile Menu Toggle
-    const mobileToggle = document.querySelector('.mobile-menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
+// DOM Elements
+const navbar = document.querySelector('.navbar');
+const mobileToggle = document.querySelector('.mobile-menu-toggle');
+const body = document.body;
+const fadeElements = document.querySelectorAll('.fade-up');
 
-    if (mobileToggle) {
-        mobileToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            mobileToggle.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
-        });
-    }
+// Scroll Observer for Fade Animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: "0px 0px -50px 0px"
+};
 
-    // Close menu when clicking a link
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', () => {
-            if (navLinks.classList.contains('active')) {
-                navLinks.classList.remove('active');
-                mobileToggle.textContent = '☰';
-            }
-        });
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target); // Only animate once
+        }
     });
+}, observerOptions);
 
-    // Smooth Scrolling with offset
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
+fadeElements.forEach(el => observer.observe(el));
 
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-                const navHeight = 80;
-                const elementPosition = targetElement.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - navHeight;
-
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: "smooth"
-                });
-            }
-        });
-    });
-
-    // Scroll animations
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+// Mobile Menu Toggle
+mobileToggle.addEventListener('click', () => {
+    body.classList.toggle('menu-open');
+    // Animate hamburger to X
+    mobileToggle.classList.toggle('active');
 });
+
+// Close mobile menu when link is clicked
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+        body.classList.remove('menu-open');
+        mobileToggle.classList.remove('active');
+    });
+});
+
+// Navbar Scroll Effect (Optional: add background opaque on scroll)
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+        navbar.style.background = 'rgba(5, 5, 5, 0.9)';
+    } else {
+        navbar.style.background = 'rgba(5, 5, 5, 0.6)';
+    }
+});
+
+console.log('April Grid Redesign Loaded');
