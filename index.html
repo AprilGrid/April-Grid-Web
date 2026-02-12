@@ -126,10 +126,18 @@
         </div>
     </section>
 
-    <!-- Instagram Slider (Elfsight Widget) -->
+    <!-- Instagram Slider (Behold Widget) -->
     <section class="instagram-feed-section">
-        <script src="https://elfsightcdn.com/platform.js" async></script>
-        <div class="elfsight-app-7e64656c-6f5e-4f22-aa84-887aee30f133" data-elfsight-app-lazy></div>
+        <behold-widget feed-id="gECNbDEyHSfn9FiZZsif"></behold-widget>
+        <script>
+            (() => {
+                const d = document,
+                    s = d.createElement("script");
+                s.type = "module";
+                s.src = "https://w.behold.so/widget.js";
+                d.head.append(s);
+            })();
+        </script>
     </section>
 
     <!-- Footer -->
