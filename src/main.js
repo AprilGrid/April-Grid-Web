@@ -47,4 +47,33 @@ window.addEventListener('scroll', () => {
     }
 });
 
+// 3D Tilt Effect for Service Cards
+const cards = document.querySelectorAll('.service-card');
+
+cards.forEach(card => {
+    const visual = card.querySelector('.card-visual img');
+
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Calculate rotation based on cursor position
+        // Center of card is (0,0) rotation
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = ((y - centerY) / centerY) * -15; // Max 15deg
+        const rotateY = ((x - centerX) / centerX) * 15;
+
+        // Apply transform
+        visual.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.1)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+        // Reset position smoothly
+        visual.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+    });
+});
+
 console.log('April Grid Redesign Loaded');
