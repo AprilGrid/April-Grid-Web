@@ -189,7 +189,8 @@ img {
     transform: translate(-50%, -50%);
     width: 60vw;
     max-width: 800px;
-    opacity: 0;
+    opacity: 0.5;
+    /* Default visibility */
     z-index: 1;
     pointer-events: none;
     /* Removed blend mode for better visibility stability */
