@@ -1,13 +1,20 @@
 import { defineConfig } from 'vite';
+import { resolve } from 'path';
 
 export default defineConfig({
-    // Base public path when served in development or production.
     base: '/',
     build: {
         outDir: 'dist',
         assetsDir: 'assets',
-        // Ensure roll-up does not hash file names too aggressively if needed, 
-        // but standard behavior is usually fine.
+        rollupOptions: {
+            input: {
+                main: resolve(__dirname, 'index.html'),
+                services: resolve(__dirname, 'services.html'),
+                work: resolve(__dirname, 'work.html'),
+                about: resolve(__dirname, 'about.html'),
+                contact: resolve(__dirname, 'contact.html'),
+            }
+        }
     },
     server: {
         port: 3000,

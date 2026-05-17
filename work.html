@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work | APRIL GRID</title>
+    <meta name="description" content="View our portfolio of creative and technology projects.">
+    <link rel="icon" type="image/png" href="/assets/logo-main.png">
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-header fade-up">
+                <h1 style="font-size: clamp(3rem, 8vw, 5rem); text-transform: uppercase; margin-bottom: 24px;">Selected Work</h1>
+                <p>We partner with ambitious brands to create digital experiences that leave a lasting impact.</p>
+            </div>
+            
+            <div class="work-filters fade-up delay-1">
+                <button class="filter-btn active" data-filter="all">All Projects</button>
+                <button class="filter-btn" data-filter="web">Web Design</button>
+                <button class="filter-btn" data-filter="branding">Branding</button>
+                <button class="filter-btn" data-filter="motion">Motion</button>
+                <button class="filter-btn" data-filter="app">App Dev</button>
+            </div>
+
+            <div class="work-grid" id="portfolio-grid">
+                <!-- Project 1 -->
+                <a href="#" class="work-card fade-up delay-2" data-category="branding">
+                    <div class="work-image-wrapper">
+                        <img src="/assets/project-1.png" alt="Global Tech Rebrand" onerror="this.src='https://placehold.co/800x600/111/444?text=Branding'">
+                    </div>
+                    <div class="work-info">
+                        <h3>Global Tech Rebrand</h3>
+                        <p>Branding & Identity</p>
+                    </div>
+                </a>
+                
+                <!-- Project 2 -->
+                <a href="#" class="work-card fade-up delay-3" data-category="app">
+                    <div class="work-image-wrapper">
+                        <img src="/assets/project-2.png" alt="Fintech Mobile App" onerror="this.src='https://placehold.co/800x600/111/444?text=App+Dev'">
+                    </div>
+                    <div class="work-info">
+                        <h3>Fintech Mobile App</h3>
+                        <p>UI/UX & App Dev</p>
+                    </div>
+                </a>
+
+                <!-- Project 3 -->
+                <a href="#" class="work-card fade-up" data-category="web">
+                    <div class="work-image-wrapper">
+                        <img src="/assets/project-3.png" alt="E-Commerce Redesign" onerror="this.src='https://placehold.co/800x600/111/444?text=Web+Design'">
+                    </div>
+                    <div class="work-info">
+                        <h3>E-Commerce Redesign</h3>
+                        <p>Web Design & Dev</p>
+                    </div>
+                </a>
+
+                <!-- Project 4 -->
+                <a href="#" class="work-card fade-up" data-category="motion">
+                    <div class="work-image-wrapper">
+                        <img src="/assets/project-1.png" alt="3D Product Launch" onerror="this.src='https://placehold.co/800x600/111/444?text=Motion'">
+                    </div>
+                    <div class="work-info">
+                        <h3>3D Product Launch</h3>
+                        <p>Motion Graphics</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Let's Talk CTA -->
+    <section class="section no-border" style="text-align: center;">
+        <div class="container fade-up">
+            <h2 style="font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 24px;">Start Your Project</h2>
+            <a href="/contact.html" class="btn-primary">Let's Talk</a>
+        </div>
+    </section>
+
+    <div id="footer-container"></div>
+    <script type="module" src="/src/main.js"></script>
+    <script>
+        // Simple inline script for filtering
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.filter-btn');
+            const cards = document.querySelectorAll('.work-card');
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active from all
+                    buttons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const filter = btn.getAttribute('data-filter');
+                    
+                    cards.forEach(card => {
+                        card.style.display = 'none'; // reset
+                        card.classList.remove('fade-up', 'delay-2', 'delay-3', 'visible'); // reset animation classes for re-trigger
+                        
+                        if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                            card.style.display = 'block';
+                            // Slight delay to allow display block to render before animating
+                            setTimeout(() => {
+                                card.classList.add('fade-up');
+                                // Force reflow
+                                void card.offsetWidth;
+                                card.classList.add('visible');
+                            }, 50);
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

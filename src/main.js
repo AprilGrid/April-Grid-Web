@@ -1,79 +1,79 @@
 import './style.css';
+import { loadComponents } from './components.js';
 
-// DOM Elements
-const navbar = document.querySelector('.navbar');
-const mobileToggle = document.querySelector('.mobile-menu-toggle');
-const body = document.body;
-const fadeElements = document.querySelectorAll('.fade-up');
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Load dynamic header and footer
+    loadComponents();
 
-// Scroll Observer for Fade Animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: "0px 0px -50px 0px"
-};
+    // 2. Setup Mobile Menu (after header is injected)
+    const mobileToggle = document.querySelector('.mobile-menu-toggle');
+    const body = document.body;
+    
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', () => {
+            body.classList.toggle('menu-open');
+            mobileToggle.classList.toggle('active');
+        });
+    }
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target); // Only animate once
+    // Close menu when clicking a link
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+            body.classList.remove('menu-open');
+            if (mobileToggle) mobileToggle.classList.remove('active');
+        });
+    });
+    
+    // Highlight active link in navbar
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        if (link.getAttribute('href') === currentPath || (currentPath === '/' && link.getAttribute('href') === '/index.html')) {
+            link.classList.add('active');
         }
     });
-}, observerOptions);
 
-fadeElements.forEach(el => observer.observe(el));
+    // 3. Scroll Animations Setup
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px"
+    };
 
-// Mobile Menu Toggle
-mobileToggle.addEventListener('click', () => {
-    body.classList.toggle('menu-open');
-    // Animate hamburger to X
-    mobileToggle.classList.toggle('active');
-});
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
 
-// Close mobile menu when link is clicked
-document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => {
-        body.classList.remove('menu-open');
-        mobileToggle.classList.remove('active');
+    // Observe fade-up elements
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    
+    // Observe text-reveal elements
+    document.querySelectorAll('.text-reveal').forEach(el => observer.observe(el));
+
+    // 4. Navbar scroll effect
+    const navbar = document.querySelector('.navbar');
+    window.addEventListener('scroll', () => {
+        if (!navbar) return;
+        if (window.scrollY > 50) {
+            navbar.style.background = 'rgba(5, 5, 5, 0.95)';
+            navbar.style.borderBottom = '1px solid rgba(255, 255, 255, 0.1)';
+        } else {
+            navbar.style.background = 'rgba(5, 5, 5, 0.8)';
+            navbar.style.borderBottom = '1px solid rgba(255, 255, 255, 0.08)';
+        }
     });
-});
 
-// Navbar Scroll Effect (Optional: add background opaque on scroll)
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        navbar.style.background = 'rgba(5, 5, 5, 0.9)';
-    } else {
-        navbar.style.background = 'rgba(5, 5, 5, 0.6)';
+    // 5. Back to top button
+    const backToTop = document.getElementById('back-to-top');
+    if (backToTop) {
+        backToTop.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
     }
+
+    console.log('April Grid Redesign Initialized');
 });
-
-// 3D Tilt Effect for Service Cards
-const cards = document.querySelectorAll('.service-card');
-
-cards.forEach(card => {
-    const visual = card.querySelector('.card-visual img');
-
-    card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        // Calculate rotation based on cursor position
-        // Center of card is (0,0) rotation
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-
-        const rotateX = ((y - centerY) / centerY) * -15; // Max 15deg
-        const rotateY = ((x - centerX) / centerX) * 15;
-
-        // Apply transform
-        visual.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.1)`;
-    });
-
-    card.addEventListener('mouseleave', () => {
-        // Reset position smoothly
-        visual.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
-    });
-});
-
-console.log('April Grid Redesign Loaded');

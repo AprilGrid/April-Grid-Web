@@ -1,206 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>April Grid | Design & Creative Agency</title>
-    <meta name="description"
-        content="We build legacies. April Grid is a full-service creative powerhouse. Branding, VFX, Music, and Digital Strategy.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="assets/logo-main.png">
+    <title>APRIL GRID | Creative & Technology Agency</title>
+    <meta name="description" content="Where Creativity Meets Code. April Grid is a full-spectrum creative and technology agency.">
+    <link rel="icon" type="image/png" href="/assets/logo-main.png">
 </head>
-
 <body>
 
-    <!-- Header / Navigation -->
-    <header class="navbar">
-        <div class="container nav-content">
-            <a href="#" class="logo">
-                <img src="assets/logo-new.png" alt="April Grid Logo" style="height: 50px; width: auto;">
-            </a>
-            <ul class="nav-links">
-                <li><a href="#services">Services</a></li>
-                <li><a href="#projects">Work</a></li>
-                <li><a href="#about">About</a></li>
-            </ul>
-            <a href="#contact" class="btn-contact">Contact Us</a>
-            <!-- Mobile Toggle -->
-            <div class="mobile-menu-toggle">
-                <span></span><span></span>
-            </div>
-        </div>
-    </header>
+    <!-- Dynamic Navbar -->
+    <div id="navbar-container"></div>
 
     <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-logo-bg">
-            <img src="/assets/logo-neon.png" alt="April Grid Icon">
-        </div>
-        <div class="container" style="z-index: 2; position: relative;">
-            <h1 class="hero-title fade-up">WE BUILD<br>LEGACIES.</h1>
-            <p class="hero-subtitle fade-up delay-1">Branding. Motion. Digital.</p>
-            <div class="scroll-indicator fade-up delay-2">
-                <span>SCROLL</span>
+    <section class="hero-section section no-border">
+        <div class="container hero-grid">
+            <h1 class="hero-title text-reveal">
+                <span>We Build.</span><br>
+                <span>We Brand.</span><br>
+                <span>We <span class="text-accent">Scale.</span></span>
+            </h1>
+            <p class="hero-subtitle fade-up delay-2">
+                April Grid is a premium creative and technology agency bridging the gap between bold design and cutting-edge engineering. We build legacies.
+            </p>
+            
+            <div class="hero-stats fade-up delay-3">
+                <div class="stat-item">
+                    <h3>150+</h3>
+                    <p>Projects Delivered</p>
+                </div>
+                <div class="stat-item">
+                    <h3>8+</h3>
+                    <p>Years Experience</p>
+                </div>
+                <div class="stat-item">
+                    <h3>10+</h3>
+                    <p>Core Services</p>
+                </div>
             </div>
         </div>
-        <div class="hero-bg"></div>
     </section>
 
-    <!-- Services Banner (Digital Design Powerhouse) -->
-    <section id="services" class="section services-redesign">
+    <!-- Services Overview -->
+    <section class="section">
         <div class="container">
-            <div class="services-header fade-up">
-                <span class="sub-label">SERVICES & EXPERTISE &darr;</span>
-                <h2>Digital Design Powerhouse</h2>
-                <p>Over the last decade, we've refined a wide range of skills in digital design, offering services
-                    mastered to perfection and always driven by the purpose of motion.</p>
+            <div class="section-header fade-up">
+                <h2>Our Expertise</h2>
+                <p>A full-spectrum approach to digital creation. We combine strategy, design, and robust technology to build experiences that matter.</p>
             </div>
-
-            <div class="services-grid">
-                <!-- Card 1: Branding -->
-                <div class="service-card fade-up delay-1">
-                    <div class="card-visual">
-                        <img src="assets/branding-keys.png" alt="Branding Identity">
-                    </div>
-                    <h3>Branding Identity</h3>
-                </div>
-
-                <!-- Card 2: Web Design -->
-                <div class="service-card fade-up delay-2">
-                    <div class="card-visual">
-                        <img src="assets/web-hand.png" alt="Web Design & Dev">
-                    </div>
-                    <h3>Web Design & Dev</h3>
-                </div>
-
-                <!-- Card 3: Motion -->
-                <div class="service-card fade-up delay-3">
-                    <div class="card-visual">
-                        <img src="assets/motion-wheel.png" alt="Motion Systems">
-                    </div>
-                    <h3>Motion Systems</h3>
-                </div>
+            
+            <div class="card-grid fade-up delay-1">
+                <a href="/services.html" class="card">
+                    <div class="card-icon">⚡</div>
+                    <h3 class="card-title">Digital Marketing & Campaigns</h3>
+                    <p class="card-desc">Performance-driven strategies that amplify your brand's reach and conversion.</p>
+                    <span class="card-link">Explore &rarr;</span>
+                </a>
+                <a href="/services.html" class="card">
+                    <div class="card-icon">🌐</div>
+                    <h3 class="card-title">Website Design & Dev</h3>
+                    <p class="card-desc">Immersive, high-performance web experiences built with modern stacks.</p>
+                    <span class="card-link">Explore &rarr;</span>
+                </a>
+                <a href="/services.html" class="card">
+                    <div class="card-icon">📱</div>
+                    <h3 class="card-title">Mobile App Development</h3>
+                    <p class="card-desc">Native and cross-platform apps for iOS and Android.</p>
+                    <span class="card-link">Explore &rarr;</span>
+                </a>
+                <a href="/services.html" class="card">
+                    <div class="card-icon">🤖</div>
+                    <h3 class="card-title">AI & Digital Creation</h3>
+                    <p class="card-desc">Leveraging generative AI for content, automation, and advanced assets.</p>
+                    <span class="card-link">Explore &rarr;</span>
+                </a>
+            </div>
+            <div style="margin-top: 40px; text-align: right;" class="fade-up">
+                <a href="/services.html" class="btn-outline">View All Services</a>
             </div>
         </div>
     </section>
 
-    <!-- Projects Grid (Alternating) -->
-    <section id="projects" class="section projects-section">
+    <!-- Featured Work -->
+    <section class="section">
         <div class="container">
             <div class="section-header fade-up">
                 <h2>Featured Work</h2>
-                <a href="#" class="view-all-link">View All Projects &rarr;</a>
+                <p>A curated selection of our finest projects where creativity meets cutting-edge execution.</p>
             </div>
-
-            <div class="projects-grid">
-                <!-- Large Feature -->
-                <article class="project-card large fade-up">
-                    <div class="card-image">
-                        <img src="assets/project-1.png" alt="Featured Project">
+            
+            <div class="work-grid">
+                <a href="/work.html" class="work-card fade-up">
+                    <div class="work-image-wrapper">
+                        <img src="/assets/project-1.png" alt="Project 1" onerror="this.src='https://placehold.co/800x600/111/444?text=Project+1'">
                     </div>
-                    <div class="card-info">
-                        <h3>Brand Identity</h3>
-                        <p>Corporate Rebrand</p>
+                    <div class="work-info">
+                        <h3>Global Tech Rebrand</h3>
+                        <p>Branding & Identity</p>
                     </div>
-                </article>
-
-                <!-- 2-Column Grid -->
-                <article class="project-card fade-up">
-                    <div class="card-image">
-                        <img src="assets/project-2.png" alt="VFX Project">
+                </a>
+                <a href="/work.html" class="work-card fade-up delay-1">
+                    <div class="work-image-wrapper">
+                        <img src="/assets/project-2.png" alt="Project 2" onerror="this.src='https://placehold.co/800x600/111/444?text=Project+2'">
                     </div>
-                    <div class="card-info">
-                        <h3>Visual Effects</h3>
-                        <p>Commercial Ad</p>
+                    <div class="work-info">
+                        <h3>Fintech Mobile App</h3>
+                        <p>UI/UX & App Dev</p>
                     </div>
-                </article>
-
-                <article class="project-card fade-up">
-                    <div class="card-image">
-                        <img src="assets/project-3.png" alt="Digital Project">
-                    </div>
-                    <div class="card-info">
-                        <h3>Music & Design</h3>
-                        <p>Audio Visualization</p>
-                    </div>
-                </article>
+                </a>
+            </div>
+            <div style="margin-top: 40px; text-align: center;" class="fade-up">
+                <a href="/work.html" class="btn-outline">View Complete Portfolio</a>
             </div>
         </div>
     </section>
 
-    <!-- About / Founder Section -->
-    <section id="about" class="section about-section">
+    <!-- Why April Grid / Process -->
+    <section class="section">
         <div class="container split-layout">
-            <div class="content fade-up">
-                <h2>The Agency</h2>
-                <p>April Grid is a full-service creative powerhouse built on nearly a decade of industry expertise.</p>
-                <div class="founder-block">
-                    <img src="assets/founder.jpg" alt="Vajan Krish" class="founder-avatar">
-                    <div class="founder-details">
-                        <h4>Vajan Krish</h4>
-                        <p class="role">Founder & Creative Director</p>
-                        <p class="bio">9+ years in corporate design, VFX, and advertising.</p>
+            <div class="fade-up">
+                <h2 style="font-size: 3rem; margin-bottom: 24px;">The Grid Process</h2>
+                <p style="color: var(--text-secondary); font-size: 1.2rem; margin-bottom: 40px; line-height: 1.6;">
+                    We don't just build; we engineer precision. Our methodology ensures that every project aligns with your core business objectives while standing out visually.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 16px;">
+                        <span class="text-accent" style="font-family: var(--font-heading); font-weight: 700; margin-right: 12px;">01</span> 
+                        <strong style="font-size: 1.2rem;">Discovery & Strategy</strong>
+                    </div>
+                    <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 16px;">
+                        <span class="text-accent" style="font-family: var(--font-heading); font-weight: 700; margin-right: 12px;">02</span> 
+                        <strong style="font-size: 1.2rem;">Design & Prototyping</strong>
+                    </div>
+                    <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 16px;">
+                        <span class="text-accent" style="font-family: var(--font-heading); font-weight: 700; margin-right: 12px;">03</span> 
+                        <strong style="font-size: 1.2rem;">Development & Engineering</strong>
+                    </div>
+                    <div style="padding-bottom: 16px;">
+                        <span class="text-accent" style="font-family: var(--font-heading); font-weight: 700; margin-right: 12px;">04</span> 
+                        <strong style="font-size: 1.2rem;">Launch & Scale</strong>
                     </div>
                 </div>
             </div>
-            <div class="image-block fade-up delay-1">
-                <img src="assets/about-collage.png" alt="Agency Collage">
+            <div class="fade-up delay-1">
+                <img src="/assets/about-collage.png" alt="Agency Process" style="border-radius: 4px; filter: grayscale(50%);" onerror="this.src='https://placehold.co/600x800/111/444?text=Process'">
             </div>
         </div>
     </section>
 
-    <!-- Instagram Slider (Behold Widget) -->
-    <section class="instagram-feed-section">
-        <behold-widget feed-id="gECNbDEyHSfn9FiZZsif"></behold-widget>
-        <script>
-            (() => {
-                const d = document,
-                    s = d.createElement("script");
-                s.type = "module";
-                s.src = "https://w.behold.so/widget.js";
-                d.head.append(s);
-            })();
-        </script>
-    </section>
-
-    <!-- Footer -->
-    <footer id="contact" class="footer-section">
-        <div class="container">
-            <div class="footer-cta fade-up">
-                <h2>Let's Talk.</h2>
-                <a href="mailto:hello@aprilgrid.com" class="email-link">hello@aprilgrid.com</a>
-                <p class="check-out">Check out our socials</p>
-            </div>
-            <div class="footer-nav fade-up delay-1">
-                <div class="col">
-                    <h4>April Grid</h4>
-                    <p>Trivandrum, Kerala, India</p>
-                    <p>+91 9688 503503</p>
-                </div>
-                <div class="col">
-                    <h4>Socials</h4>
-                    <a href="https://www.instagram.com/aprilgrid" target="_blank">Instagram</a>
-                    <a href="#">LinkedIn</a>
-                    <a href="#">Behance</a>
-                </div>
-                <div class="col">
-                    <h4>Menu</h4>
-                    <a href="#services">Services</a>
-                    <a href="#projects">Work</a>
-                    <a href="#about">About</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 April Grid. All rights reserved.</p>
-                <a href="#" class="back-to-top">Back to top &uarr;</a>
-            </div>
-        </div>
-    </footer>
+    <!-- Dynamic Footer -->
+    <div id="footer-container"></div>
 
     <script type="module" src="/src/main.js"></script>
 </body>
-
 </html>
