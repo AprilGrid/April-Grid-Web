@@ -193,7 +193,7 @@ module.exports = async function handler(req, res) {
         // 5. Send Mail
         const mailOptions = {
             from: `"April Grid Portal" <${isUsingTestAccount ? transporter.options.auth.user : process.env.SMTP_USER}>`,
-            to: 'hello@aprilgrid.com',
+            to: 'support@aprilgrid.com',
             subject: `[CAREERS] Application: ${fullname} - ${role.toUpperCase()}`,
             text: `April Grid Career Application\n\nCandidate: ${fullname}\nEmail: ${email}\nPhone: ${phone}\nApplied For: ${role}\nExperience: ${experience} yrs\nPortfolio: ${portfolioUrl}\n\nMotivation:\n${whyJoin}`,
             html: htmlContent,

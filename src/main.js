@@ -259,6 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const draftSyncStatus = document.getElementById('draft-sync-status');
         const formSubmitError = document.getElementById('form-submit-error');
         const uploadLimitError = document.getElementById('upload-limit-error');
+        const consentCheckbox = document.getElementById('join-consent');
         
         let currentStep = 1;
         const totalSteps = 4;
@@ -266,9 +267,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const stepLabels = [
             "Personal Profile",
-            "Professional Dossier",
-            "Skills & Education",
-            "Media Uploads & Mission"
+            "Professional Information",
+            "Portfolio & Uploads",
+            "Review & Submit"
         ];
 
         const skillsSuggestionsList = [
@@ -283,7 +284,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         let selectedSkills = [];
         
-        // In-memory base64 files collection to avoid parsing files at submit-time
         let uploadedFiles = {
             profile_photo_file: null,
             resume_file: null,
@@ -296,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modalOverlay.classList.add('active');
             body.classList.add('menu-open');
             
+            // Prefill with drafts if available
             prefillDraft();
             updateStepDisplay();
         });
@@ -306,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modalOverlay.classList.remove('active');
             body.classList.remove('menu-open');
             
-            if (successScreen.classList.contains('active')) {
+            if (successScreen.style.display === 'flex') {
                 resetModalForm();
             }
         };
@@ -328,18 +329,30 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
                 e.preventDefault();
                 
-                // If it is in the skills input, pressing Enter creates a tag
                 if (e.target.id === 'join-skills-search') {
                     const text = e.target.value.trim();
                     if (text && !selectedSkills.includes(text)) {
                         addSkill(text);
                     }
                 } else if (currentStep < totalSteps) {
-                    // Try to go to next step
                     btnNext.click();
                 }
             }
         });
+
+        // Toggle Submit Button Disabled state based on Consent Checkbox
+        if (consentCheckbox) {
+            consentCheckbox.addEventListener('change', () => {
+                const consentParent = consentCheckbox.closest('.consent-checkbox-wrapper');
+                if (consentParent) consentParent.classList.remove('field-invalid');
+                
+                if (consentCheckbox.checked) {
+                    btnSubmit.removeAttribute('disabled');
+                } else {
+                    btnSubmit.setAttribute('disabled', 'disabled');
+                }
+            });
+        }
 
         // Multi-Step Display Updates
         function updateStepDisplay() {
@@ -349,7 +362,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     step.style.display = 'flex';
                     step.classList.add('active');
                     
-                    // Trap keyboard focus inside active step
                     const focusable = step.querySelectorAll('input, select, textarea, [tabindex="0"]');
                     if (focusable.length > 0) {
                         focusable[0].focus();
@@ -368,6 +380,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnPrev.style.display = 'block';
                 btnNext.style.display = 'none';
                 btnSubmit.style.display = 'block';
+                
+                // Consent logic validation initialization
+                if (consentCheckbox && !consentCheckbox.checked) {
+                    btnSubmit.setAttribute('disabled', 'disabled');
+                } else {
+                    btnSubmit.removeAttribute('disabled');
+                }
+                
+                // Compile and render live entries onto Review page
+                renderSummaryPage();
             } else {
                 btnPrev.style.display = 'block';
                 btnNext.style.display = 'block';
@@ -379,15 +401,76 @@ document.addEventListener('DOMContentLoaded', () => {
             progressBarFill.style.width = `${pct}%`;
             progressLabel.textContent = stepLabels[currentStep - 1];
             
-            // Scroll modal form container back to top on step transition
             const formContainer = modalOverlay.querySelector('.join-modal-form-container');
             if (formContainer) formContainer.scrollTop = 0;
             
-            // Smooth mobile scroll to window top
             const modalWindow = modalOverlay.querySelector('.join-modal-window');
             if (modalWindow) modalWindow.scrollTop = 0;
 
             updateCursorHoverEvents();
+        }
+
+        // Generate application summary dynamically
+        function renderSummaryPage() {
+            const reviewPersonal = document.getElementById('review-personal');
+            const reviewProfessional = document.getElementById('review-professional');
+            const reviewUploads = document.getElementById('review-uploads');
+            
+            if (!reviewPersonal || !reviewProfessional || !reviewUploads) return;
+            
+            const valOf = (id) => {
+                const el = document.getElementById(id);
+                return el ? (el.value.trim() || 'Not provided') : 'Not provided';
+            };
+
+            const valOfSelect = (id) => {
+                const el = document.getElementById(id);
+                if (!el) return 'Not provided';
+                const opt = el.options[el.selectedIndex];
+                return opt ? (opt.text || 'Not provided') : 'Not provided';
+            };
+
+            // Populate Personal Profile Summary
+            reviewPersonal.innerHTML = `
+                <div class="review-item-row"><span class="review-item-label">Name</span><span class="review-item-value" title="${valOf('join-fullname')}">${valOf('join-fullname')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Email</span><span class="review-item-value" title="${valOf('join-email')}">${valOf('join-email')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Phone</span><span class="review-item-value" title="${valOf('join-phone')}">${valOf('join-phone')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">DOB</span><span class="review-item-value">${valOf('join-dob')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Gender</span><span class="review-item-value">${valOfSelect('join-gender')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Location</span><span class="review-item-value" title="${valOf('join-location')}">${valOf('join-location')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Nationality</span><span class="review-item-value" title="${valOf('join-nationality')}">${valOf('join-nationality')}</span></div>
+            `;
+
+            // Populate Professional Info Summary
+            reviewProfessional.innerHTML = `
+                <div class="review-item-row"><span class="review-item-label">Target Role</span><span class="review-item-value">${valOfSelect('join-role')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Experience</span><span class="review-item-value">${valOf('join-experience')} Years</span></div>
+                <div class="review-item-row"><span class="review-item-label">Current Company</span><span class="review-item-value" title="${valOf('join-company')}">${valOf('join-company')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Current Position</span><span class="review-item-value" title="${valOf('join-position')}">${valOf('join-position')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Expected Salary</span><span class="review-item-value">${valOf('join-expected-salary')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Notice Period</span><span class="review-item-value">${valOf('join-notice-period')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Portfolio URL</span><span class="review-item-value" title="${valOf('join-portfolio')}">${valOf('join-portfolio')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">LinkedIn</span><span class="review-item-value" title="${valOf('join-linkedin')}">${valOf('join-linkedin')}</span></div>
+                ${document.getElementById('github-field-wrapper').style.display !== 'none' ? `
+                <div class="review-item-row"><span class="review-item-label">GitHub</span><span class="review-item-value" title="${valOf('join-github')}">${valOf('join-github')}</span></div>
+                ` : ''}
+            `;
+
+            // Populate Uploads & Skills Summary
+            const getFileName = (fileObj) => fileObj ? fileObj.name : 'No file uploaded';
+            
+            reviewUploads.innerHTML = `
+                <div class="review-item-row"><span class="review-item-label">Degree</span><span class="review-item-value">${valOfSelect('join-qualification')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Institution</span><span class="review-item-value" title="${valOf('join-institution')}">${valOf('join-institution')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Grad Year</span><span class="review-item-value">${valOf('join-gradyear')}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Skills List</span><span class="review-item-value" title="${selectedSkills.join(', ')}">${selectedSkills.join(', ') || 'None selected'}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Photo</span><span class="review-item-value" title="${getFileName(uploadedFiles.profile_photo_file)}">${getFileName(uploadedFiles.profile_photo_file)}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Resume PDF</span><span class="review-item-value" title="${getFileName(uploadedFiles.resume_file)}">${getFileName(uploadedFiles.resume_file)}</span></div>
+                <div class="review-item-row"><span class="review-item-label">Portfolio ZIP</span><span class="review-item-value" title="${getFileName(uploadedFiles.portfolio_attachment_file)}">${getFileName(uploadedFiles.portfolio_attachment_file)}</span></div>
+                ${document.getElementById('showreel-field-wrapper').style.display !== 'none' ? `
+                <div class="review-item-row"><span class="review-item-label">Showreel</span><span class="review-item-value" title="${getFileName(uploadedFiles.showreel_file)}">${getFileName(uploadedFiles.showreel_file)}</span></div>
+                ` : ''}
+            `;
         }
 
         // Navigation actions
@@ -477,15 +560,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Total Upload Size Limit validation inside Step 4
-            if (stepNum === 4 && !checkTotalFileSize()) {
+            // Total Upload Size Limit validation inside Step 3
+            if (stepNum === 3 && !checkTotalFileSize()) {
                 isValid = false;
             }
 
             return isValid;
         }
 
-        // Real-time input cleaning
+        // Real-time input validation
         form.querySelectorAll('input, select, textarea').forEach(el => {
             el.addEventListener('input', () => {
                 const parent = el.closest('.form-group');
@@ -503,7 +586,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveDraft();
             });
 
-            // Blur validation trigger
             el.addEventListener('blur', () => {
                 validateField(el);
             });
@@ -567,7 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Auto-save drafts
         function saveDraft() {
-            if (isSubmitting) return; // Block writing drafts while submitting
+            if (isSubmitting) return;
             
             const formData = {};
             const elements = form.querySelectorAll('input, select, textarea');
@@ -692,7 +774,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCursorHoverEvents();
         }
 
-        // Skills tags suggestion searchable actions
+        // Skills suggestions and tag actions
         const skillsSearchInput = document.getElementById('join-skills-search');
         const skillsSuggestionsPanel = document.getElementById('skills-suggestions');
         const skillsTagsContainer = document.getElementById('skills-tags-container');
@@ -779,7 +861,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const preview = zone.querySelector('.preview-area');
             if (!input || !preview) return;
 
-            // Accessibility: trigger click on Space/Enter key press
             zone.addEventListener('keydown', (e) => {
                 if (e.key === ' ' || e.key === 'Enter') {
                     e.preventDefault();
@@ -844,7 +925,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const reader = new FileReader();
             reader.onload = (e) => {
-                // Store base64 data directly in-memory
                 const base64 = e.target.result;
                 uploadedFiles[input.name + "_file"] = {
                     base64: base64,
@@ -852,7 +932,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     size: file.size
                 };
                 
-                // Add preview thumbnail for image
                 if (file.type.startsWith('image/')) {
                     const img = document.createElement('img');
                     img.style.width = '44px';
@@ -893,10 +972,21 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            if (isSubmitting) return; // Prevent double submit
+            if (isSubmitting) return;
+
+            // Consent validation Check
+            if (consentCheckbox && !consentCheckbox.checked) {
+                const consentParent = consentCheckbox.closest('.consent-checkbox-wrapper');
+                if (consentParent) {
+                    consentParent.classList.add('field-invalid');
+                    const errSpan = document.getElementById('consent-error');
+                    if (errSpan) errSpan.textContent = "You must consent to terms to submit your application.";
+                }
+                return;
+            }
+
             if (!validateStep(4)) return;
 
-            // Start loader submitting state
             isSubmitting = true;
             btnSubmit.classList.add('loading');
             btnSubmit.setAttribute('disabled', 'disabled');
@@ -909,7 +999,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                // Build complete submission payload (including base64 files)
                 const payload = {
                     fullname: document.getElementById('join-fullname').value,
                     email: document.getElementById('join-email').value,
@@ -936,14 +1025,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     work_type: form.querySelector('input[name="work_type"]:checked').value,
                     remote_work: document.getElementById('join-remote').checked,
                     
-                    // Attachments data
                     profile_photo_file: uploadedFiles.profile_photo_file,
                     resume_file: uploadedFiles.resume_file,
                     portfolio_attachment_file: uploadedFiles.portfolio_attachment_file,
                     showreel_file: uploadedFiles.showreel_file
                 };
 
-                // Dispatch POST request to serverless API
                 const response = await fetch('/api/apply', {
                     method: 'POST',
                     headers: {
@@ -958,25 +1045,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(data.error || 'Server rejected your application. Please check fields.');
                 }
 
-                // If successful:
-                localStorage.removeItem('april_grid_draft'); // Clear Drafts
+                // SUCCESS STATE TRIGGER ONLY ON TRUE CONFIRMED RESPONSE!
+                localStorage.removeItem('april_grid_draft'); 
                 
-                // Show Success Screen
+                successScreen.style.display = 'flex';
+                // Force layout reflow
+                void successScreen.offsetWidth;
                 successScreen.classList.add('active');
                 runConfetti();
 
             } catch (err) {
                 console.error("Submission API Error:", err);
                 if (formSubmitError) {
-                    formSubmitError.textContent = `Submission Error: ${err.message}. Please retry.`;
+                    formSubmitError.textContent = `Submission Error: ${err.message}. Please try again.`;
                     formSubmitError.style.display = 'block';
                     
-                    // Scroll down to display the error clearly
                     const formContainer = modalOverlay.querySelector('.join-modal-form-container');
                     if (formContainer) formContainer.scrollTop = formContainer.scrollHeight;
+                    
+                    const modalWindow = modalOverlay.querySelector('.join-modal-window');
+                    if (modalWindow) modalWindow.scrollTop = modalWindow.scrollHeight;
                 }
             } finally {
-                // Remove loading states
                 isSubmitting = false;
                 btnSubmit.classList.remove('loading');
                 btnSubmit.removeAttribute('disabled');
@@ -1014,8 +1104,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (uploadLimitError) {
                 uploadLimitError.style.display = 'none';
             }
+            
+            const consentParent = consentCheckbox.closest('.consent-checkbox-wrapper');
+            if (consentParent) consentParent.classList.remove('field-invalid');
+            const consentErrSpan = document.getElementById('consent-error');
+            if (consentErrSpan) consentErrSpan.textContent = '';
 
+            // Strict Close resets display to none
             successScreen.classList.remove('active');
+            successScreen.style.display = 'none';
+            
             updateStepDisplay();
         };
 
