@@ -72,10 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
     animateCursor();
 
     function updateCursorHoverEvents() {
-        const hoverables = document.querySelectorAll('a, button, select, input, textarea, .filter-btn, .mobile-menu-toggle, .pill-radio, .switch-toggle, [role="button"]');
+        const hoverables = document.querySelectorAll('a, button, select, input, textarea, .filter-btn, .mobile-menu-toggle, .pill-radio, .switch-toggle, .upload-dropzone, [role="button"]');
         
         hoverables.forEach(el => {
-            // Remove previous to avoid duplicates
             el.removeEventListener('mouseenter', addCursorHover);
             el.removeEventListener('mouseleave', removeCursorHover);
             
@@ -101,6 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (mobileToggle) {
         mobileToggle.addEventListener('click', () => {
+            const expanded = mobileToggle.getAttribute('aria-expanded') === 'true' || false;
+            mobileToggle.setAttribute('aria-expanded', !expanded);
             body.classList.toggle('menu-open');
             mobileToggle.classList.toggle('active');
         });
@@ -109,7 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.nav-links a').forEach(link => {
         link.addEventListener('click', () => {
             body.classList.remove('menu-open');
-            if (mobileToggle) mobileToggle.classList.remove('active');
+            if (mobileToggle) {
+                mobileToggle.classList.remove('active');
+                mobileToggle.setAttribute('aria-expanded', 'false');
+            }
         });
     });
     
@@ -253,9 +257,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const progressBarFill = document.getElementById('progress-bar-fill');
         const progressLabel = modalOverlay.querySelector('.progress-step-label');
         const draftSyncStatus = document.getElementById('draft-sync-status');
+        const formSubmitError = document.getElementById('form-submit-error');
+        const uploadLimitError = document.getElementById('upload-limit-error');
         
         let currentStep = 1;
         const totalSteps = 4;
+        let isSubmitting = false;
         
         const stepLabels = [
             "Personal Profile",
@@ -264,7 +271,6 @@ document.addEventListener('DOMContentLoaded', () => {
             "Media Uploads & Mission"
         ];
 
-        // Suggestions DB for Skills Tag Input
         const skillsSuggestionsList = [
             "React", "Vue", "Angular", "Svelte", "Node.js", "Three.js", "WebGL", "GSAP", "Framer Motion", "Vite", "TypeScript",
             "SAP ABAP", "SAP HANA", "SAP Fiori", "SAP UI5", "SAP Consultant",
@@ -276,23 +282,30 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
         
         let selectedSkills = [];
+        
+        // In-memory base64 files collection to avoid parsing files at submit-time
+        let uploadedFiles = {
+            profile_photo_file: null,
+            resume_file: null,
+            portfolio_attachment_file: null,
+            showreel_file: null
+        };
 
-        // Toggle Modal Open
+        // Open Modal
         btnJoinNow.addEventListener('click', () => {
             modalOverlay.classList.add('active');
-            body.classList.add('menu-open'); // disable background scrolling
+            body.classList.add('menu-open');
             
-            // Prefill with drafts if available
             prefillDraft();
             updateStepDisplay();
         });
 
-        // Toggle Modal Close
+        // Close Modal
         const closeModal = () => {
+            if (isSubmitting) return; // Prevent closing while API request runs
             modalOverlay.classList.remove('active');
             body.classList.remove('menu-open');
             
-            // If they closed on success, reset the form completely
             if (successScreen.classList.contains('active')) {
                 resetModalForm();
             }
@@ -303,18 +316,50 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target === modalOverlay) closeModal();
         });
 
+        // Keyboard accessibility: Escape to Close
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // Block premature Enter submit inside inputs
+        form.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                
+                // If it is in the skills input, pressing Enter creates a tag
+                if (e.target.id === 'join-skills-search') {
+                    const text = e.target.value.trim();
+                    if (text && !selectedSkills.includes(text)) {
+                        addSkill(text);
+                    }
+                } else if (currentStep < totalSteps) {
+                    // Try to go to next step
+                    btnNext.click();
+                }
+            }
+        });
+
         // Multi-Step Display Updates
         function updateStepDisplay() {
             steps.forEach(step => {
                 const s = parseInt(step.getAttribute('data-step'));
                 if (s === currentStep) {
+                    step.style.display = 'flex';
                     step.classList.add('active');
+                    
+                    // Trap keyboard focus inside active step
+                    const focusable = step.querySelectorAll('input, select, textarea, [tabindex="0"]');
+                    if (focusable.length > 0) {
+                        focusable[0].focus();
+                    }
                 } else {
+                    step.style.display = 'none';
                     step.classList.remove('active');
                 }
             });
 
-            // Adjust navigation control buttons
             if (currentStep === 1) {
                 btnPrev.style.display = 'none';
                 btnNext.style.display = 'block';
@@ -329,13 +374,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnSubmit.style.display = 'none';
             }
 
-            // Update sidebar elements
             currentStepNum.textContent = `0${currentStep}`;
             const pct = (currentStep / totalSteps) * 100;
             progressBarFill.style.width = `${pct}%`;
             progressLabel.textContent = stepLabels[currentStep - 1];
             
-            // Update custom hover cursor links
+            // Scroll modal form container back to top on step transition
+            const formContainer = modalOverlay.querySelector('.join-modal-form-container');
+            if (formContainer) formContainer.scrollTop = 0;
+            
+            // Smooth mobile scroll to window top
+            const modalWindow = modalOverlay.querySelector('.join-modal-window');
+            if (modalWindow) modalWindow.scrollTop = 0;
+
             updateCursorHoverEvents();
         }
 
@@ -366,11 +417,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const fields = currentStepPanel.querySelectorAll('input[required], select[required], textarea[required]');
             
             fields.forEach(field => {
-                // Skip validating if field or its wrapper is hidden (conditional fields)
                 let parent = field.closest('.form-group');
                 if (parent && parent.style.display === 'none') return;
+                
                 let uploadWrapper = field.closest('#showreel-field-wrapper');
                 if (uploadWrapper && uploadWrapper.style.display === 'none') return;
+
+                let uploadBoxWrapper = field.closest('.upload-box-wrapper');
 
                 const val = field.value.trim();
                 let isFieldValid = true;
@@ -389,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         new URL(val);
                     } catch (_) {
                         isFieldValid = false;
-                        errMsg = "Please enter a valid URL (e.g. https://github.com).";
+                        errMsg = "Please enter a valid URL.";
                     }
                 }
 
@@ -399,49 +452,134 @@ document.addEventListener('DOMContentLoaded', () => {
                         parent.classList.add('field-invalid');
                         const errSpan = parent.querySelector('.field-error');
                         if (errSpan) errSpan.textContent = errMsg;
+                    } else if (uploadBoxWrapper) {
+                        uploadBoxWrapper.classList.add('field-invalid');
+                        const errSpan = uploadBoxWrapper.querySelector('.field-error');
+                        if (errSpan) errSpan.textContent = errMsg;
                     }
                 } else {
                     if (parent) {
                         parent.classList.remove('field-invalid');
+                    } else if (uploadBoxWrapper) {
+                        uploadBoxWrapper.classList.remove('field-invalid');
                     }
                 }
             });
 
+            // Specific Skills validation inside Step 3
+            if (stepNum === 3 && selectedSkills.length === 0) {
+                isValid = false;
+                const skillsGroup = hiddenSkillsInput.closest('.form-group');
+                if (skillsGroup) {
+                    skillsGroup.classList.add('field-invalid');
+                    const errSpan = skillsGroup.querySelector('.field-error');
+                    if (errSpan) errSpan.textContent = "Please add at least one core skill.";
+                }
+            }
+
+            // Total Upload Size Limit validation inside Step 4
+            if (stepNum === 4 && !checkTotalFileSize()) {
+                isValid = false;
+            }
+
             return isValid;
         }
 
-        // Listen for user input typing to clear errors
-        form.addEventListener('input', (e) => {
-            const parent = e.target.closest('.form-group');
-            if (parent && parent.classList.contains('field-invalid')) {
-                parent.classList.remove('field-invalid');
-            }
-            saveDraft();
+        // Real-time input cleaning
+        form.querySelectorAll('input, select, textarea').forEach(el => {
+            el.addEventListener('input', () => {
+                const parent = el.closest('.form-group');
+                if (parent && parent.classList.contains('field-invalid')) {
+                    parent.classList.remove('field-invalid');
+                }
+                saveDraft();
+            });
+
+            el.addEventListener('change', () => {
+                const parent = el.closest('.form-group');
+                if (parent && parent.classList.contains('field-invalid')) {
+                    parent.classList.remove('field-invalid');
+                }
+                saveDraft();
+            });
+
+            // Blur validation trigger
+            el.addEventListener('blur', () => {
+                validateField(el);
+            });
         });
 
-        form.addEventListener('change', (e) => {
-            const parent = e.target.closest('.form-group');
-            if (parent && parent.classList.contains('field-invalid')) {
+        function validateField(field) {
+            let parent = field.closest('.form-group');
+            if (!parent || parent.style.display === 'none' || !field.hasAttribute('required')) return;
+            
+            const val = field.value.trim();
+            let isFieldValid = true;
+            let errMsg = "This field is required.";
+
+            if (!val) {
+                isFieldValid = false;
+            } else if (field.type === 'email') {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!re.test(val)) {
+                    isFieldValid = false;
+                    errMsg = "Invalid email format.";
+                }
+            } else if (field.type === 'url') {
+                try {
+                    new URL(val);
+                } catch (_) {
+                    isFieldValid = false;
+                    errMsg = "Invalid URL layout.";
+                }
+            }
+
+            if (!isFieldValid) {
+                parent.classList.add('field-invalid');
+                const errSpan = parent.querySelector('.field-error');
+                if (errSpan) errSpan.textContent = errMsg;
+            } else {
                 parent.classList.remove('field-invalid');
             }
-            saveDraft();
-        });
+        }
 
-        // Auto-save Local Drafts
+        // File upload size validation
+        function checkTotalFileSize() {
+            let total = 0;
+            Object.values(uploadedFiles).forEach(f => {
+                if (f) total += f.size;
+            });
+            
+            const maxLimit = 4 * 1024 * 1024; // 4MB Vercel Max payload limit
+            if (total > maxLimit) {
+                if (uploadLimitError) {
+                    uploadLimitError.textContent = `Upload limit exceeded: ${(total / (1024 * 1024)).toFixed(2)}MB uploaded (Max 4.0MB combined). Please upload smaller files or provide links.`;
+                    uploadLimitError.style.display = 'block';
+                }
+                return false;
+            } else {
+                if (uploadLimitError) {
+                    uploadLimitError.style.display = 'none';
+                }
+                return true;
+            }
+        }
+
+        // Auto-save drafts
         function saveDraft() {
+            if (isSubmitting) return; // Block writing drafts while submitting
+            
             const formData = {};
             const elements = form.querySelectorAll('input, select, textarea');
             
             elements.forEach(el => {
-                if (el.type === 'file' || el.type === 'radio') return;
+                if (el.type === 'file' || el.type === 'radio' || el.type === 'checkbox') return;
                 formData[el.name] = el.value;
             });
             
-            // Radio work type
             const checkedRadio = form.querySelector('input[name="work_type"]:checked');
             if (checkedRadio) formData['work_type'] = checkedRadio.value;
             
-            // Remote toggle
             const remoteToggle = document.getElementById('join-remote');
             if (remoteToggle) formData['remote_work'] = remoteToggle.checked;
 
@@ -450,7 +588,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             localStorage.setItem('april_grid_draft', JSON.stringify(formData));
             
-            // Pulse Synced status
             if (draftSyncStatus) {
                 draftSyncStatus.textContent = "SAVED";
                 draftSyncStatus.classList.remove('text-gradient-violet');
@@ -498,10 +635,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentStep = draft.step;
                 }
                 
-                // Trigger conditional changes
                 handleRoleConditionalFields();
             } catch (err) {
-                console.error("Error prefilling application draft:", err);
+                console.error("Error prefilling draft:", err);
             }
         }
 
@@ -519,28 +655,44 @@ document.addEventListener('DOMContentLoaded', () => {
             const gitInput = document.getElementById('join-github');
             const showreelInput = document.getElementById('join-showreel');
 
-            // Web Dev or UIUX Dev -> Show GitHub Profile url
             if (val === 'web-dev' || val === 'uiux-dev') {
                 gitField.style.display = 'block';
                 if (gitInput) gitInput.setAttribute('required', 'required');
             } else {
                 gitField.style.display = 'none';
-                if (gitInput) gitInput.removeAttribute('required');
+                if (gitInput) {
+                    gitInput.removeAttribute('required');
+                    gitInput.value = '';
+                }
+                const gitParent = gitInput ? gitInput.closest('.form-group') : null;
+                if (gitParent) gitParent.classList.remove('field-invalid');
             }
 
-            // Cinematographer or Video Editor -> Show Showreel file upload
             if (val === 'cinematographer' || val === 'video-editor') {
                 showreelField.style.display = 'block';
                 if (showreelInput) showreelInput.setAttribute('required', 'required');
             } else {
                 showreelField.style.display = 'none';
-                if (showreelInput) showreelInput.removeAttribute('required');
+                if (showreelInput) {
+                    showreelInput.removeAttribute('required');
+                    showreelInput.value = '';
+                }
+                uploadedFiles.showreel_file = null;
+                const showreelDropzone = document.getElementById('dropzone-showreel');
+                if (showreelDropzone) {
+                    showreelDropzone.classList.remove('has-file');
+                    const preview = showreelDropzone.querySelector('.preview-area');
+                    if (preview) preview.innerHTML = '';
+                }
+                const showreelParent = showreelField.closest('.upload-box-wrapper');
+                if (showreelParent) showreelParent.classList.remove('field-invalid');
             }
             
+            checkTotalFileSize();
             updateCursorHoverEvents();
         }
 
-        // Skills tag suggestion searchable actions
+        // Skills tags suggestion searchable actions
         const skillsSearchInput = document.getElementById('join-skills-search');
         const skillsSuggestionsPanel = document.getElementById('skills-suggestions');
         const skillsTagsContainer = document.getElementById('skills-tags-container');
@@ -564,6 +716,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     matches.forEach(m => {
                         const div = document.createElement('div');
                         div.textContent = m;
+                        div.setAttribute('role', 'option');
                         div.addEventListener('click', () => {
                             addSkill(m);
                         });
@@ -575,18 +728,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Prevent enter key submitting form prematurely
-            skillsSearchInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    const text = skillsSearchInput.value.trim();
-                    if (text && !selectedSkills.includes(text)) {
-                        addSkill(text);
-                    }
-                }
-            });
-
-            // Hide suggestions panel on document click
             document.addEventListener('click', (e) => {
                 if (e.target !== skillsSearchInput) {
                     skillsSuggestionsPanel.style.display = 'none';
@@ -615,15 +756,13 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedSkills.forEach(s => {
                 const tag = document.createElement('div');
                 tag.className = 'skill-tag';
-                tag.innerHTML = `${s} <span>&times;</span>`;
+                tag.innerHTML = `${s} <span aria-label="Remove skill ${s}">&times;</span>`;
                 tag.querySelector('span').addEventListener('click', () => removeSkill(s));
                 skillsTagsContainer.appendChild(tag);
             });
 
-            // Update hidden input to support HTML native validation
             if (hiddenSkillsInput) {
                 hiddenSkillsInput.value = selectedSkills.join(',');
-                // Dispatch event to clear potential validation state
                 const parent = hiddenSkillsInput.closest('.form-group');
                 if (parent && selectedSkills.length > 0) {
                     parent.classList.remove('field-invalid');
@@ -640,10 +779,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const preview = zone.querySelector('.preview-area');
             if (!input || !preview) return;
 
-            // Highlight dropzone on drag states
+            // Accessibility: trigger click on Space/Enter key press
+            zone.addEventListener('keydown', (e) => {
+                if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    input.click();
+                }
+            });
+
+            zone.addEventListener('click', () => {
+                input.click();
+            });
+
             ['dragenter', 'dragover'].forEach(eventName => {
                 zone.addEventListener(eventName, (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     zone.classList.add('dragover');
                 }, false);
             });
@@ -651,11 +802,14 @@ document.addEventListener('DOMContentLoaded', () => {
             ['dragleave', 'drop'].forEach(eventName => {
                 zone.addEventListener(eventName, (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     zone.classList.remove('dragover');
                 }, false);
             });
 
             zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 const dt = e.dataTransfer;
                 const files = dt.files;
                 if (files.length > 0) {
@@ -664,7 +818,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }, false);
 
-            input.addEventListener('change', () => {
+            input.addEventListener('change', (e) => {
+                e.stopPropagation();
                 handleFileUpload(zone, input, preview);
             });
         });
@@ -676,7 +831,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const file = files[0];
             zone.classList.add('has-file');
 
-            // Find name error wrap and clear it
             const wrapper = zone.closest('.upload-box-wrapper');
             if (wrapper) wrapper.classList.remove('field-invalid');
 
@@ -685,36 +839,50 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const fileInfo = document.createElement('div');
             fileInfo.className = 'preview-file-info';
-            fileInfo.textContent = file.name;
+            fileInfo.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
             preview.appendChild(fileInfo);
 
-            // Thumbnail check if image profile photo
-            if (file.type.startsWith('image/')) {
-                const img = document.createElement('img');
-                img.style.width = '50px';
-                img.style.height = '50px';
-                img.style.objectFit = 'cover';
-                img.style.borderRadius = '50%';
-                img.style.marginBottom = '6px';
-                
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    img.src = e.target.result;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                // Store base64 data directly in-memory
+                const base64 = e.target.result;
+                uploadedFiles[input.name + "_file"] = {
+                    base64: base64,
+                    name: file.name,
+                    size: file.size
                 };
-                reader.readAsDataURL(file);
-                preview.insertBefore(img, fileInfo);
-            }
+                
+                // Add preview thumbnail for image
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.style.width = '44px';
+                    img.style.height = '44px';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '50%';
+                    img.style.marginBottom = '6px';
+                    img.src = base64;
+                    preview.insertBefore(img, fileInfo);
+                }
+                
+                checkTotalFileSize();
+                saveDraft();
+            };
+            reader.readAsDataURL(file);
 
             const removeBtn = document.createElement('button');
             removeBtn.type = 'button';
             removeBtn.className = 'preview-remove-btn';
             removeBtn.textContent = 'Remove';
+            removeBtn.setAttribute('aria-label', `Remove uploaded file ${file.name}`);
             
             removeBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 input.value = '';
+                uploadedFiles[input.name + "_file"] = null;
                 zone.classList.remove('has-file');
                 preview.innerHTML = '';
+                checkTotalFileSize();
+                saveDraft();
             });
             preview.appendChild(removeBtn);
             
@@ -722,19 +890,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Form Submit Handler
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            if (!validateStep(currentStep)) return;
+            if (isSubmitting) return; // Prevent double submit
+            if (!validateStep(4)) return;
 
-            // Trigger submit loading state
+            // Start loader submitting state
+            isSubmitting = true;
             btnSubmit.classList.add('loading');
             btnSubmit.setAttribute('disabled', 'disabled');
+            btnPrev.setAttribute('disabled', 'disabled');
+            btnClose.setAttribute('disabled', 'disabled');
             
-            // Telemetry sync simulation (1.5s)
-            setTimeout(() => {
-                // Fetch submission payload details
-                const application = {
+            if (formSubmitError) {
+                formSubmitError.style.display = 'none';
+                formSubmitError.textContent = '';
+            }
+
+            try {
+                // Build complete submission payload (including base64 files)
+                const payload = {
                     fullname: document.getElementById('join-fullname').value,
                     email: document.getElementById('join-email').value,
                     phone: document.getElementById('join-phone').value,
@@ -759,31 +935,54 @@ document.addEventListener('DOMContentLoaded', () => {
                     best_project: document.getElementById('join-best-project').value,
                     work_type: form.querySelector('input[name="work_type"]:checked').value,
                     remote_work: document.getElementById('join-remote').checked,
-                    submitted_at: new Date().toISOString()
+                    
+                    // Attachments data
+                    profile_photo_file: uploadedFiles.profile_photo_file,
+                    resume_file: uploadedFiles.resume_file,
+                    portfolio_attachment_file: uploadedFiles.portfolio_attachment_file,
+                    showreel_file: uploadedFiles.showreel_file
                 };
 
-                // Store securely in localStorage list
-                let apps = [];
-                const existing = localStorage.getItem('april_grid_applications');
-                if (existing) {
-                    try {
-                        apps = JSON.parse(existing);
-                    } catch (_) {}
+                // Dispatch POST request to serverless API
+                const response = await fetch('/api/apply', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Server rejected your application. Please check fields.');
                 }
-                apps.push(application);
-                localStorage.setItem('april_grid_applications', JSON.stringify(apps));
 
-                // Clear Draft data
-                localStorage.removeItem('april_grid_draft');
-
-                // Toggle Success Screen layout
+                // If successful:
+                localStorage.removeItem('april_grid_draft'); // Clear Drafts
+                
+                // Show Success Screen
                 successScreen.classList.add('active');
                 runConfetti();
 
-                // Reset loading button states
+            } catch (err) {
+                console.error("Submission API Error:", err);
+                if (formSubmitError) {
+                    formSubmitError.textContent = `Submission Error: ${err.message}. Please retry.`;
+                    formSubmitError.style.display = 'block';
+                    
+                    // Scroll down to display the error clearly
+                    const formContainer = modalOverlay.querySelector('.join-modal-form-container');
+                    if (formContainer) formContainer.scrollTop = formContainer.scrollHeight;
+                }
+            } finally {
+                // Remove loading states
+                isSubmitting = false;
                 btnSubmit.classList.remove('loading');
                 btnSubmit.removeAttribute('disabled');
-            }, 1500);
+                btnPrev.removeAttribute('disabled');
+                btnClose.removeAttribute('disabled');
+            }
         });
 
         // Success Return Actions
@@ -792,7 +991,13 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedSkills = [];
             currentStep = 1;
             
-            // Clear files preview states
+            uploadedFiles = {
+                profile_photo_file: null,
+                resume_file: null,
+                portfolio_attachment_file: null,
+                showreel_file: null
+            };
+
             dropzones.forEach(zone => {
                 zone.classList.remove('has-file');
                 const preview = zone.querySelector('.preview-area');
@@ -801,9 +1006,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (input) input.value = '';
             });
 
-            // Reset labels displays
             if (skillsTagsContainer) skillsTagsContainer.innerHTML = '';
-            
+            if (formSubmitError) {
+                formSubmitError.style.display = 'none';
+                formSubmitError.textContent = '';
+            }
+            if (uploadLimitError) {
+                uploadLimitError.style.display = 'none';
+            }
+
             successScreen.classList.remove('active');
             updateStepDisplay();
         };
