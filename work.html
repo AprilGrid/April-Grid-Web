@@ -6,17 +6,50 @@
     <title>Work | APRIL GRID</title>
     <meta name="description" content="View our portfolio of creative and technology projects.">
     <link rel="icon" type="image/png" href="/assets/logo-main.png">
+    <style>
+        /* Modern scale-up filter transition utility */
+        .work-card-anim {
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: center;
+        }
+        .work-card-anim.hidden {
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+            pointer-events: none;
+            position: absolute;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+    </style>
 </head>
 <body>
+
+    <!-- Sleek Futuristic Preloader -->
+    <div id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-count">00</div>
+            <div class="preloader-tagline">APRIL GRID • SELECTED PORTFOLIO</div>
+        </div>
+    </div>
+
+    <!-- Glowing Cyber Grid Backgrounds -->
+    <div class="bg-grid-overlay"></div>
+    <div class="bg-radial-glow"></div>
+
     <div id="navbar-container"></div>
 
-    <section class="section">
+    <section class="section" style="padding-top: 180px;">
         <div class="container">
             <div class="section-header fade-up">
-                <h1 style="font-size: clamp(3rem, 8vw, 5rem); text-transform: uppercase; margin-bottom: 24px;">Selected Work</h1>
+                <h1 style="font-size: clamp(3rem, 8vw, 5.5rem); text-transform: uppercase; margin-bottom: 24px;">Selected Work</h1>
                 <p>We partner with ambitious brands to create digital experiences that leave a lasting impact.</p>
             </div>
             
+            <!-- Dynamic Work Filters -->
             <div class="work-filters fade-up delay-1">
                 <button class="filter-btn active" data-filter="all">All Projects</button>
                 <button class="filter-btn" data-filter="web">Web Design</button>
@@ -25,91 +58,121 @@
                 <button class="filter-btn" data-filter="app">App Dev</button>
             </div>
 
+            <!-- Portfolio Grid -->
             <div class="work-grid" id="portfolio-grid">
+                
                 <!-- Project 1 -->
-                <a href="#" class="work-card fade-up delay-2" data-category="branding">
+                <div class="work-card work-card-anim fade-up delay-2" data-category="branding">
                     <div class="work-image-wrapper">
-                        <img src="/assets/project-1.png" alt="Global Tech Rebrand" onerror="this.src='https://placehold.co/800x600/111/444?text=Branding'">
+                        <div class="work-card-tags">
+                            <span class="tag-pill">Branding</span>
+                            <span class="tag-pill">Identity</span>
+                        </div>
+                        <img src="/assets/project-1.png" alt="Global Tech Rebrand" onerror="this.src='https://placehold.co/800x600/0a0a0c/1a1a24?text=Branding'">
                     </div>
                     <div class="work-info">
                         <h3>Global Tech Rebrand</h3>
-                        <p>Branding & Identity</p>
+                        <p class="mono-num">01 / BRANDING</p>
                     </div>
-                </a>
+                </div>
                 
                 <!-- Project 2 -->
-                <a href="#" class="work-card fade-up delay-3" data-category="app">
+                <div class="work-card work-card-anim fade-up delay-3" data-category="app">
                     <div class="work-image-wrapper">
-                        <img src="/assets/project-2.png" alt="Fintech Mobile App" onerror="this.src='https://placehold.co/800x600/111/444?text=App+Dev'">
+                        <div class="work-card-tags">
+                            <span class="tag-pill">UI/UX</span>
+                            <span class="tag-pill">App Dev</span>
+                        </div>
+                        <img src="/assets/project-2.png" alt="Fintech Mobile App" onerror="this.src='https://placehold.co/800x600/0a0a0c/1a1a24?text=App+Development'">
                     </div>
                     <div class="work-info">
                         <h3>Fintech Mobile App</h3>
-                        <p>UI/UX & App Dev</p>
+                        <p class="mono-num">02 / PRODUCT</p>
                     </div>
-                </a>
+                </div>
 
                 <!-- Project 3 -->
-                <a href="#" class="work-card fade-up" data-category="web">
+                <div class="work-card work-card-anim fade-up" data-category="web">
                     <div class="work-image-wrapper">
-                        <img src="/assets/project-3.png" alt="E-Commerce Redesign" onerror="this.src='https://placehold.co/800x600/111/444?text=Web+Design'">
+                        <div class="work-card-tags">
+                            <span class="tag-pill">Web Design</span>
+                            <span class="tag-pill">E-Commerce</span>
+                        </div>
+                        <img src="/assets/project-3.png" alt="E-Commerce Redesign" onerror="this.src='https://placehold.co/800x600/0a0a0c/1a1a24?text=Web+Design'">
                     </div>
                     <div class="work-info">
                         <h3>E-Commerce Redesign</h3>
-                        <p>Web Design & Dev</p>
+                        <p class="mono-num">03 / COMMERCE</p>
                     </div>
-                </a>
+                </div>
 
                 <!-- Project 4 -->
-                <a href="#" class="work-card fade-up" data-category="motion">
+                <div class="work-card work-card-anim fade-up" data-category="motion">
                     <div class="work-image-wrapper">
-                        <img src="/assets/project-1.png" alt="3D Product Launch" onerror="this.src='https://placehold.co/800x600/111/444?text=Motion'">
+                        <div class="work-card-tags">
+                            <span class="tag-pill">Motion Graphics</span>
+                            <span class="tag-pill">3D Art</span>
+                        </div>
+                        <img src="/assets/project-1.png" alt="3D Product Launch" onerror="this.src='https://placehold.co/800x600/0a0a0c/1a1a24?text=Motion+Graphics'">
                     </div>
                     <div class="work-info">
                         <h3>3D Product Launch</h3>
-                        <p>Motion Graphics</p>
+                        <p class="mono-num">04 / MOTION</p>
                     </div>
-                </a>
+                </div>
+                
             </div>
         </div>
     </section>
 
     <!-- Let's Talk CTA -->
-    <section class="section no-border" style="text-align: center;">
+    <section class="section no-border" style="text-align: center; padding: 120px 0;">
         <div class="container fade-up">
-            <h2 style="font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 24px;">Start Your Project</h2>
-            <a href="/contact.html" class="btn-primary">Let's Talk</a>
+            <h2 style="font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 40px; text-transform: uppercase;">Start Your Project</h2>
+            <div class="btn-magnet-wrap">
+                <a href="/contact.html" class="btn-futuristic btn-futuristic-cyan">
+                    <span>Let's Talk</span>
+                </a>
+            </div>
         </div>
     </section>
 
     <div id="footer-container"></div>
     <script type="module" src="/src/main.js"></script>
     <script>
-        // Simple inline script for filtering
         document.addEventListener('DOMContentLoaded', () => {
-            const buttons = document.querySelectorAll('.filter-btn');
-            const cards = document.querySelectorAll('.work-card');
+            const buttons = document.querySelectorAll('.work-filters .filter-btn');
+            const cards = document.querySelectorAll('#portfolio-grid .work-card');
 
             buttons.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    // Remove active from all
+                    // Update active button state
                     buttons.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     
                     const filter = btn.getAttribute('data-filter');
                     
                     cards.forEach(card => {
-                        card.style.display = 'none'; // reset
-                        card.classList.remove('fade-up', 'delay-2', 'delay-3', 'visible'); // reset animation classes for re-trigger
+                        const category = card.getAttribute('data-category');
                         
-                        if (filter === 'all' || card.getAttribute('data-category') === filter) {
-                            card.style.display = 'block';
-                            // Slight delay to allow display block to render before animating
+                        if (filter === 'all' || category === filter) {
+                            // Reveal card with animation
+                            card.classList.remove('hidden');
                             setTimeout(() => {
-                                card.classList.add('fade-up');
-                                // Force reflow
-                                void card.offsetWidth;
-                                card.classList.add('visible');
+                                card.style.opacity = '1';
+                                card.style.transform = 'scale(1) translateY(0)';
                             }, 50);
+                        } else {
+                            // Hide card with transition
+                            card.style.opacity = '0';
+                            card.style.transform = 'scale(0.85) translateY(20px)';
+                            
+                            // Set display none after opacity animation completes
+                            setTimeout(() => {
+                                if (btn.getAttribute('data-filter') !== 'all' && category !== btn.getAttribute('data-filter')) {
+                                    card.classList.add('hidden');
+                                }
+                            }, 400);
                         }
                     });
                 });

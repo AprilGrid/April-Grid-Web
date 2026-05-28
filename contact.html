@@ -8,43 +8,55 @@
     <link rel="icon" type="image/png" href="/assets/logo-main.png">
 </head>
 <body>
+
+    <!-- Sleek Futuristic Preloader -->
+    <div id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-count">00</div>
+            <div class="preloader-tagline">APRIL GRID • CONNECT CHANNELS</div>
+        </div>
+    </div>
+
+    <!-- Glowing Cyber Grid Backgrounds -->
+    <div class="bg-grid-overlay"></div>
+    <div class="bg-radial-glow"></div>
+
     <div id="navbar-container"></div>
 
-    <section class="section" style="padding-top: 160px;">
+    <section class="section" style="padding-top: 180px;">
         <div class="container split-layout">
             
-            <!-- Left Side: Contact Form -->
+            <!-- Left Side: Futuristic Contact Form -->
             <div class="fade-up">
-                <h1 style="font-size: clamp(3rem, 8vw, 5rem); margin-bottom: 24px; text-transform: uppercase;">Let's Talk.</h1>
-                <p style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 40px;">
+                <h1 style="font-size: clamp(3rem, 8vw, 5.5rem); margin-bottom: 24px; text-transform: uppercase;">Let's Talk.</h1>
+                <p style="font-size: 1.15rem; color: var(--text-secondary); margin-bottom: 48px;">
                     Fill out the form below and our team will get back to you within 24 hours.
                 </p>
                 
                 <form class="contact-form">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
                         <div class="form-group">
-                            <label for="name">Name</label>
                             <input type="text" id="name" name="name" required placeholder="John Doe">
+                            <label for="name">Name</label>
                         </div>
                         <div class="form-group">
-                            <label for="company">Company</label>
                             <input type="text" id="company" name="company" placeholder="Your Company">
+                            <label for="company">Company</label>
                         </div>
                     </div>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
                         <div class="form-group">
-                            <label for="email">Email</label>
                             <input type="email" id="email" name="email" required placeholder="john@example.com">
+                            <label for="email">Email</label>
                         </div>
                         <div class="form-group">
-                            <label for="phone">Phone</label>
                             <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000">
+                            <label for="phone">Phone</label>
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="service">Service Needed</label>
                         <select id="service" name="service" required style="color: var(--text-secondary);">
                             <option value="" disabled selected>Select a Service</option>
                             <option value="digital-marketing">Digital Marketing</option>
@@ -57,49 +69,59 @@
                             <option value="branding">Branding & Print</option>
                             <option value="motion">Motion Graphics</option>
                         </select>
+                        <label for="service">Service Needed</label>
                     </div>
                     
                     <div class="form-group">
-                        <label for="budget">Budget Range</label>
                         <select id="budget" name="budget" style="color: var(--text-secondary);">
-                            <option value="" disabled selected>Select Budget</option>
+                            <option value="" disabled selected>Select Budget Range</option>
                             <option value="small">&lt; $10k</option>
                             <option value="medium">$10k - $50k</option>
                             <option value="large">$50k - $100k</option>
                             <option value="enterprise">&gt; $100k</option>
                         </select>
+                        <label for="budget">Budget Range</label>
                     </div>
                     
                     <div class="form-group">
-                        <label for="message">Message</label>
                         <textarea id="message" name="message" required placeholder="Tell us about your project..."></textarea>
+                        <label for="message">Message</label>
                     </div>
                     
-                    <button type="submit" class="btn-primary" style="margin-top: 24px; align-self: flex-start; cursor: pointer;">Send Message</button>
+                    <div class="btn-magnet-wrap" style="align-self: flex-start; margin-top: 20px;">
+                        <button type="submit" class="btn-futuristic btn-futuristic-cyan">
+                            <span>Send Message</span>
+                        </button>
+                    </div>
                 </form>
             </div>
             
-            <!-- Right Side: Office Details -->
-            <div class="fade-up delay-1" style="background: var(--bg-card); padding: 60px 40px; border: 1px solid var(--border-color); border-radius: 4px; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                <h3 style="font-size: 2rem; margin-bottom: 40px;">Office</h3>
-                
-                <div style="margin-bottom: 40px;">
-                    <h4 style="color: var(--text-secondary); text-transform: uppercase; font-size: 0.9rem; margin-bottom: 8px;">Address</h4>
-                    <p style="font-size: 1.2rem;">Trivandrum,<br>Kerala, India</p>
-                </div>
-                
-                <div style="margin-bottom: 40px;">
-                    <h4 style="color: var(--text-secondary); text-transform: uppercase; font-size: 0.9rem; margin-bottom: 8px;">Direct Contact</h4>
-                    <p style="font-size: 1.2rem; margin-bottom: 8px;"><a href="mailto:hello@aprilgrid.com" class="text-accent">hello@aprilgrid.com</a></p>
-                    <p style="font-size: 1.2rem;">+91 9688 503503</p>
-                </div>
-                
-                <div>
-                    <h4 style="color: var(--text-secondary); text-transform: uppercase; font-size: 0.9rem; margin-bottom: 8px;">Follow Us</h4>
-                    <div style="display: flex; gap: 20px;">
-                        <a href="https://www.instagram.com/aprilgrid" target="_blank" style="font-size: 1.1rem; text-decoration: underline;">Instagram</a>
-                        <a href="#" style="font-size: 1.1rem; text-decoration: underline;">LinkedIn</a>
-                        <a href="#" style="font-size: 1.1rem; text-decoration: underline;">Behance</a>
+            <!-- Right Side: Office Coordinates Card -->
+            <div class="fade-up delay-2">
+                <div class="glass-panel office-coordinate-card">
+                    <h3 style="font-size: 2.2rem; text-transform: uppercase; margin-bottom: 10px;">Coordinates</h3>
+                    <div style="width: 100%; height: 1px; background: var(--border-color); margin-bottom: 20px;"></div>
+                    
+                    <div class="office-info-item">
+                        <h5>Agency Headquarters</h5>
+                        <p>Trivandrum,<br>Kerala, India</p>
+                    </div>
+                    
+                    <div class="office-info-item">
+                        <h5>Direct Channels</h5>
+                        <p style="margin-bottom: 8px;">
+                            <a href="mailto:hello@aprilgrid.com" class="text-gradient-cyan">hello@aprilgrid.com</a>
+                        </p>
+                        <p class="mono-num" style="font-size: 1.25rem;">+91 9688 503503</p>
+                    </div>
+                    
+                    <div class="office-info-item">
+                        <h5>Telemetry</h5>
+                        <div class="office-socials-grid">
+                            <a href="https://www.instagram.com/aprilgrid" target="_blank" class="social-link">Instagram</a>
+                            <a href="#" class="social-link">LinkedIn</a>
+                            <a href="#" class="social-link">Behance</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -111,10 +133,10 @@
     <script type="module" src="/src/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const selects = document.querySelectorAll('select');
-            selects.forEach(select => {
+            const selectElements = document.querySelectorAll('select');
+            selectElements.forEach(select => {
                 select.addEventListener('change', function() {
-                    this.style.color = 'var(--text-primary)';
+                    this.style.color = '#ffffff';
                 });
             });
         });

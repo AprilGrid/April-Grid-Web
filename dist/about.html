@@ -6,19 +6,32 @@
     <title>About | APRIL GRID</title>
     <meta name="description" content="Learn about April Grid's mission, values, and the team behind the agency.">
     <link rel="icon" type="image/png" href="/assets/logo-main.png">
-  <script type="module" crossorigin src="/assets/main-CKvl4bka.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/main-Cnfp7CnG.css">
+  <script type="module" crossorigin src="/assets/main-DNuhqJ4G.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/main-CdCzWDvn.css">
 </head>
 <body>
+
+    <!-- Sleek Futuristic Preloader -->
+    <div id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-count">00</div>
+            <div class="preloader-tagline">APRIL GRID • ABOUT THE AGENCY</div>
+        </div>
+    </div>
+
+    <!-- Glowing Cyber Grid Backgrounds -->
+    <div class="bg-grid-overlay"></div>
+    <div class="bg-radial-glow"></div>
+
     <div id="navbar-container"></div>
 
     <!-- About Hero -->
-    <section class="section" style="padding-top: 200px;">
+    <section class="section no-border" style="padding-top: 200px; min-height: 70vh; display: flex; align-items: center;">
         <div class="container fade-up">
-            <h1 style="font-size: clamp(4rem, 10vw, 7rem); text-transform: uppercase; line-height: 0.9; margin-bottom: 40px; letter-spacing: -2px;">
-                We are <br><span class="text-accent">April Grid.</span>
+            <h1 style="font-size: clamp(3.5rem, 9vw, 7.5rem); text-transform: uppercase; line-height: 0.9; margin-bottom: 40px; letter-spacing: -3px;">
+                We are <br><span class="text-gradient-violet">April Grid.</span>
             </h1>
-            <p style="font-size: clamp(1.2rem, 3vw, 2rem); color: var(--text-secondary); max-width: 800px; line-height: 1.5;">
+            <p style="font-size: clamp(1.2rem, 2.5vw, 1.8rem); color: var(--text-secondary); max-width: 850px; line-height: 1.5; font-weight: 300;">
                 A collective of designers, engineers, and strategists driven by the singular goal of building digital legacies.
             </p>
         </div>
@@ -28,54 +41,71 @@
     <section class="section">
         <div class="container split-layout">
             <div class="content fade-up">
-                <h2 style="font-size: 3rem; margin-bottom: 30px; text-transform: uppercase;">Our Story</h2>
-                <p style="font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 40px;">
+                <h2 style="font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 30px; text-transform: uppercase;">Our Story</h2>
+                <p style="font-size: 1.15rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 40px;">
                     Founded on nearly a decade of industry expertise, April Grid started with a simple belief: the best digital experiences happen when world-class design meets robust engineering. We don't just build websites or launch campaigns; we engineer precision.
                 </p>
-                <div class="founder-block" style="display: flex; align-items: center; gap: 20px; border-left: 2px solid var(--accent-color); padding-left: 24px;">
-                    <img src="/assets/founder.jpg" alt="Vajan Krish" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" onerror="this.src='https://placehold.co/80x80/222/555?text=VK'">
-                    <div>
-                        <h4 style="font-size: 1.3rem; margin-bottom: 4px; font-family: var(--font-heading);">Vajan Krish</h4>
-                        <p style="color: var(--accent-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 8px;">Founder & Creative Director</p>
-                        <p style="color: var(--text-secondary); font-size: 0.9rem;">9+ years in corporate design, VFX, and advertising.</p>
+                
+                <!-- Exec Dossier Card -->
+                <div class="founder-card glass-panel">
+                    <div class="founder-img-wrap">
+                        <img src="/assets/founder.jpg" alt="Vajan Krish" onerror="this.src='https://placehold.co/150x150/0a0a0c/1a1a24?text=VK'">
+                    </div>
+                    <div class="founder-info">
+                        <h4>Vajan Krish</h4>
+                        <p class="founder-role">Founder & Creative Director</p>
+                        <p class="founder-desc">9+ years in corporate design, VFX, and advertising. Driving design paradigms into functional code.</p>
                     </div>
                 </div>
             </div>
-            <div class="fade-up delay-1">
-                <img src="/assets/about-collage.png" alt="Agency Culture" style="border-radius: 4px; filter: grayscale(30%);" onerror="this.src='https://placehold.co/800x800/111/444?text=Agency'">
+            
+            <div class="fade-up delay-2">
+                <div style="border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); background: var(--bg-card); aspect-ratio: 1/1;">
+                    <img src="/assets/about-collage.png" alt="Agency Culture" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) brightness(0.9) contrast(1.05);" onerror="this.src='https://placehold.co/800x800/0a0a0c/1a1a24?text=April+Grid'">
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Core Values -->
-    <section class="section" style="background: var(--bg-card);">
+    <section class="section">
         <div class="container">
             <div class="section-header fade-up">
                 <h2>Core Values</h2>
                 <p>The principles that guide our work, our culture, and our partnerships.</p>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;" class="fade-up delay-1">
-                <div style="padding: 40px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color);">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 16px; color: var(--accent-color);">01. Precision</h3>
-                    <p style="color: var(--text-secondary);">We believe in the grid. Structure, alignment, and pixel-perfect execution are non-negotiable.</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;" class="fade-up delay-1">
+                <div class="glass-panel expert-card" style="padding: 50px 40px;">
+                    <div class="process-num" style="margin-bottom: 24px;">01</div>
+                    <h3 style="font-size: 1.8rem; margin-bottom: 16px; text-transform: uppercase;">Precision</h3>
+                    <p style="color: var(--text-secondary); margin: 0; font-size: 1.05rem;">We believe in the grid. Structure, alignment, and pixel-perfect execution are non-negotiable.</p>
                 </div>
-                <div style="padding: 40px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color);">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 16px; color: var(--accent-color);">02. Boldness</h3>
-                    <p style="color: var(--text-secondary);">Safe is forgettable. We push creative boundaries to ensure your brand stands out in a crowded market.</p>
+                
+                <div class="glass-panel expert-card" style="padding: 50px 40px;" data-color="cyan">
+                    <div class="process-num" style="margin-bottom: 24px; color: var(--accent-cyan);">02</div>
+                    <h3 style="font-size: 1.8rem; margin-bottom: 16px; text-transform: uppercase;">Boldness</h3>
+                    <p style="color: var(--text-secondary); margin: 0; font-size: 1.05rem;">Safe is forgettable. We push creative boundaries to ensure your brand stands out in a crowded market.</p>
                 </div>
-                <div style="padding: 40px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color);">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 16px; color: var(--accent-color);">03. Impact</h3>
-                    <p style="color: var(--text-secondary);">Aesthetics mean nothing without results. We build experiences that drive measurable business growth.</p>
+                
+                <div class="glass-panel expert-card" style="padding: 50px 40px;">
+                    <div class="process-num" style="margin-bottom: 24px;">03</div>
+                    <h3 style="font-size: 1.8rem; margin-bottom: 16px; text-transform: uppercase;">Impact</h3>
+                    <p style="color: var(--text-secondary); margin: 0; font-size: 1.05rem;">Aesthetics mean nothing without results. We build experiences that drive measurable business growth.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Let's Talk CTA -->
-    <section class="section no-border" style="text-align: center;">
+    <section class="section no-border" style="text-align: center; padding: 120px 0;">
         <div class="container fade-up">
-            <h2 style="font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 24px;">Join the Grid</h2>
-            <a href="/contact.html" class="btn-primary">Work With Us</a>
+            <h2 style="font-size: clamp(2.5rem, 6vw, 4.5rem); margin-bottom: 40px; text-transform: uppercase;">Join the Grid</h2>
+            <div class="btn-magnet-wrap">
+                <a href="/contact.html" class="btn-futuristic btn-futuristic-cyan">
+                    <span>Work With Us</span>
+                </a>
+            </div>
         </div>
     </section>
 
